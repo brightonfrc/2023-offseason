@@ -46,8 +46,8 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     // Drive for 2 seconds
     if (m_timer.get() < 2.0) {
-      // Drive forwards half speed, make sure to turn input squaring off
-      m_robotDrive.arcadeDrive(0.5, 0.0, false);
+      // Drive forwards full speed, make sure to turn input squaring off
+      m_robotDrive.arcadeDrive(1.0, 0.0, false);
     } else {
       m_robotDrive.stopMotor(); // stop robot
     }
@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
-    m_robotDrive.arcadeDrive(-m_controller.getLeftY(), -m_controller.getRightX());
+    m_robotDrive.arcadeDrive(-m_controller.getLeftY()*2.0, -m_controller.getRightX());
   }
 
   /** This function is called once each time the robot enters test mode. */
