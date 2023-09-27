@@ -1,0 +1,86 @@
+import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.objdetect.CascadeClassifier;
+import org.ros.internal.message.Message;
+import org.ros.node.NodeConfiguration;
+import org.ros.node.NodeMain;
+import org.ros.node.topic.Publisher;
+import org.ros.node.ConnectedNode;
+import org.ros.namespace.GraphName;
+import org.ros.node.AbstractNodeMain;
+
+public class AdvancedRobot extends AbstractNodeMain implements NodeMain {
+
+    private Publisher<Message> pathPublisher;
+    private CascadeClassifier objectDetector;
+
+    @Override
+    public GraphName getDefaultNodeName() {
+        return GraphName.of("advanced_robot");
+    }
+
+    @Override
+    public void onStart(ConnectedNode connectedNode) {
+        pathPublisher = connectedNode.newPublisher("robot_path", Message.class);
+
+        // Ініціалізація детектора об'єктів OpenCV
+        objectDetector = new CascadeClassifier("object_cascade.xml");
+
+        // Підключення до камери або іншого сенсора
+        Camera camera = new Camera();
+        camera.connect();
+
+        // Основний цикл робота
+        while (connectedNode != null) {
+            // Отримання зображення з камери
+            Mat frame = camera.captureFrame();
+
+            // Використання детектора об'єктів OpenCV для розпізнавання об'єктів
+            List<Rect> detectedObjects = new ArrayList<>();
+            objectDetector.detectMultiScale(frame, detectedObjects);
+
+            // Аналіз розпізнаних об'єктів та визначення, які з них потрібно об'їзджати
+            List<Object> objectsToAvoid = ObjectAnalysis.analyzeObjects(detectedObjects);
+
+            // Планування маршруту для об'їзду об'єктів
+            List<Waypoint> path = PathPlanning.planPath(objectsToAvoid);
+
+            // Відправка маршруту через ROS
+            publishPath(path);
+        }
+    }
+
+    private void publishPath(List<Waypoint> path) {
+        // Опублікувати маршрут через ROS
+        // Код для роботи з ROS повинен бути доданий тут
+    }
+}
+
+class Camera {
+    public void connect() {
+        // Логіка підключення до камери
+    }
+
+    public Mat captureFrame() {
+        // Логіка отримання кадру з камери за допомогою OpenCV
+        return new Mat();
+    }
+}
+
+class ObjectAnalysis {
+    public static List<Object> analyzeObjects(List<Rect> detectedObjects) {
+        // Логіка аналізу розпізнаних об'єктів
+        return null;
+    }
+}
+
+class PathPlanning {
+    public static List<Waypoint> planPath(List<Object> objectsToAvoid) {
+        // Логіка планування маршруту
+        return null;
+    }
+}
+
+class Waypoint {
+    // Клас для представлення точок маршруту
+}
