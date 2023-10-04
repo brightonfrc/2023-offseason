@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -16,7 +19,10 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
  * the package after creating this project, you must also update the manifest file in the resource
  * directory.
  */
+
+
 public class Robot extends TimedRobot {
+  
   private final PWMSparkMax m_leftDrive = new PWMSparkMax(0);
   private final PWMSparkMax m_rightDrive = new PWMSparkMax(1);
   private final DifferentialDrive m_robotDrive = new DifferentialDrive(m_leftDrive, m_rightDrive);
@@ -38,6 +44,14 @@ public class Robot extends TimedRobot {
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
+    // locations for swerve drive locations relative to center of the robot
+    Pose2d m_frontLeftLocation = new Pose2d();
+    Pose2d m_frontRightLocation = new Pose2d();
+    Pose2d m_backLeftLocation = new Pose2d();
+    Pose2d m_backRightLocation = new Pose2d();
+    SwerveDriveKinematics m_kinematics;
+    // creating a swerve drive kinematics objects
+
     m_timer.restart();
   }
 
