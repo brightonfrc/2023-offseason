@@ -113,6 +113,14 @@ public class Robot extends TimedRobot {
      * measurements and make it difficult to accurately determine its color.
      */
     Color detectedColor = m_colorSensor.getColor();
+    double IR = m_colorSensor.getIR();
+    SmartDashboard.putNumber("Red", detectedColor.red);
+    SmartDashboard.putNumber("Green", detectedColor.green);
+    SmartDashboard.putNumber("Blue", detectedColor.blue);
+    SmartDashboard.putNumber("IR", IR);
+    int proximity = m_colorSensor.getProximity();
+
+    SmartDashboard.putNumber("Proximity", proximity);
 
     /**
      * Run the color match algorithm on our detected color
