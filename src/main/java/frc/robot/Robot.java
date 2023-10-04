@@ -30,15 +30,41 @@ public class Robot extends TimedRobot {
   private final Timer m_timer = new Timer();
 
   /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
+   * Change the I2C port below to match the connection of your color sensor
    */
+  private final I2C.Port i2cPort = I2C.Port.kOnboard;
+
+  /**
+   * A Rev Color Sensor V3 object is constructed with an I2C port as a 
+   * parameter. The device will be automatically initialized with default 
+   * parameters.
+   */
+  private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
+
+  /**
+   * A Rev Color Match object is used to register and detect known colors. This can 
+   * be calibrated ahead of time or during operation.
+   * 
+   * This object uses a simple euclidian distance to estimate the closest match
+   * with given confidence range.
+   */
+  private final ColorMatch m_colorMatcher = new ColorMatch();
+
+  /**
+   * Note: Any example colors should be calibrated as the user needs, these
+   * are here as a basic example.
+   */
+  private final Color kBlueTarget = new Color(0.143, 0.427, 0.429);
+  private final Color kGreenTarget = new Color(0.197, 0.561, 0.240);
+  private final Color kRedTarget = new Color(0.561, 0.232, 0.114);
+  private final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
+
   @Override
   public void robotInit() {
-    // We need to invert one side of the drivetrain so that positive voltages
-    // result in both sides moving forward. Depending on how your robot's
-    // gearbox is constructed, you might have to invert the left side instead.
-    m_rightDrive.setInverted(true);
+    m_colorMatcher.addColorMatch(kBlueTarget);
+    m_colorMatcher.addColorMatch(kGreenTarget);
+    m_colorMatcher.addColorMatch(kRedTarget);
+    m_colorMatcher.addColorMatch(kYellowTarget);    
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
