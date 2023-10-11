@@ -5,14 +5,15 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -44,13 +45,20 @@ public class Robot extends TimedRobot {
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
+    // creating the variables required for the swerve drive odometry class
     // locations for swerve drive locations relative to center of the robot
-    Pose2d m_frontLeftLocation = new Pose2d();
-    Pose2d m_frontRightLocation = new Pose2d();
-    Pose2d m_backLeftLocation = new Pose2d();
-    Pose2d m_backRightLocation = new Pose2d();
-    SwerveDriveKinematics m_kinematics;
-    // creating a swerve drive kinematics objects
+    Translation2d m_frontLeftLocation = new Translation2d();
+    Translation2d m_frontRightLocation = new Translation2d();
+    Translation2d m_backLeftLocation = new Translation2d();
+    Translation2d m_backRightLocation = new Translation2d();
+    SwerveModulePosition m_frontLeft = new SwerveModulePosition();
+    SwerveModulePosition m_frontRight = new SwerveModulePosition();
+    //initialising the swerve drive kinematics
+    SwerveDriveKinematics m_kinematics= new SwerveDriveKinematics(m_frontLeftLocation,m_frontRightLocation,m_backLeftLocation,m_backRightLocation);
+    // initial coordinate and bearing of the robot
+    Pose2d currentPose = new Pose2d();
+
+    
 
     m_timer.restart();
   }
