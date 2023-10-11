@@ -28,6 +28,7 @@ public class Robot extends TimedRobot {
   private final DifferentialDrive m_robotDrive = new DifferentialDrive(m_leftDrive, m_rightDrive);
   private final XboxController m_controller = new XboxController(0);
   private final Timer m_timer = new Timer();
+  public boolean detected = false;
 
   /**
    * Change the I2C port below to match the connection of your color sensor
@@ -125,19 +126,11 @@ public class Robot extends TimedRobot {
     /**
      * Run the color match algorithm on our detected color
      */
-    String colorString;
     ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
-
-    if (match.color == kBlueTarget) {
-      colorString = "Blue";
-    } else if (match.color == kRedTarget) {
-      colorString = "Red";
-    } else if (match.color == kGreenTarget) {
-      colorString = "Green";
-    } else if (match.color == kYellowTarget) {
-      colorString = "Yellow";
-    } else {
-      colorString = "Unknown";
+    if (!detected) {
+      if (match.color == kBlueTarget) {
+        detected = true;
+      } 
     }
 
     /**
@@ -148,6 +141,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Green", detectedColor.green);
     SmartDashboard.putNumber("Blue", detectedColor.blue);
     SmartDashboard.putNumber("Confidence", match.confidence);
-    SmartDashboard.putString("Detected Color", colorString);
+    SmartDashboard.putBoolean("found blue", detected);
+    
   }
 }
