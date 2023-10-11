@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
     ultrasonicTriggerPinTwo.set(false);
   }
  
-  public void turnOnSensorTwo() {
+ /* public void turnOnSensorTwo() {
     ultrasonicTriggerPinOne.set(false);
     ultrasonicTriggerPinTwo.set(true);
   }
@@ -51,7 +51,7 @@ public class Robot extends TimedRobot {
   public void turnOffBothSensors() {
     ultrasonicTriggerPinOne.set(false);
     ultrasonicTriggerPinTwo.set(false);
-  }
+  } */
 
   /**
    * This function is run when the robot is first started up and should be used for any
