@@ -58,17 +58,15 @@ public class Robot extends TimedRobot {
     SwerveModulePosition m_frontRight = new SwerveModulePosition();
     SwerveModulePosition m_backLeft = new SwerveModulePosition();
     SwerveModulePosition m_backRight = new SwerveModulePosition();
-    SwerveModulePosition[] MotorPosition= {m_frontLeft,m_frontRight,m_backLeft,m_backRight};
+    SwerveModulePosition[] MotorPositions= {m_frontLeft,m_frontRight,m_backLeft,m_backRight};
     //initialising the gyro
     WPI_PigeonIMU gyro = new WPI_PigeonIMU(0); 
     //initialising the swerve drive kinematics
-    SwerveDriveKinematics m_kinematics= new SwerveDriveKinematics(m_frontLeftLocation,m_frontRightLocation,m_backLeftLocation,m_backRightLocation);
+    SwerveDriveKinematics robot_kinematics= new SwerveDriveKinematics(m_frontLeftLocation,m_frontRightLocation,m_backLeftLocation,m_backRightLocation);
     // initial coordinate and bearing of the robot
     Pose2d currentPose = new Pose2d();
-    // storing the 
-
-    
-
+    // creating the SwerveDriveOdometry
+    SwerveDriveOdometry Robot_position = new SwerveDriveOdometry(robot_kinematics, gyro.getRotation2d(),MotorPositions,currentPose);
     m_timer.restart();
   }
 
