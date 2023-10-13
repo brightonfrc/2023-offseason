@@ -66,20 +66,14 @@ public class Robot extends TimedRobot {
     // initial coordinate and bearing of the robot
     Pose2d currentPose = new Pose2d();
     // creating the SwerveDriveOdometry
-    SwerveDriveOdometry Robot_position = new SwerveDriveOdometry(robot_kinematics, gyro.getRotation2d(),MotorPositions,currentPose);
+    SwerveDriveOdometry odometry = new SwerveDriveOdometry(robot_kinematics, gyro.getRotation2d(),MotorPositions,currentPose);
     m_timer.restart();
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    // Drive for 2 seconds
-    if (m_timer.get() < 2.0) {
-      // Drive forwards half speed, make sure to turn input squaring off
-      m_robotDrive.arcadeDrive(0.5, 0.0, false);
-    } else {
-      m_robotDrive.stopMotor(); // stop robot
-    }
+    //find a way to get this function to recognise variables declared in autonomousInit()
   }
 
   /** This function is called once each time the robot enters teleoperated mode. */
