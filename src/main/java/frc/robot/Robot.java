@@ -68,7 +68,9 @@ public class Robot extends TimedRobot {
   private double bError;
   //remember to tune the PID controller
   private PIDController bearingError = new PIDController(0.0,0.0,0.0);
+  private double bearingOutput;
   private PIDController distanceError = new PIDController(0.0,0.0,0.0);
+  private double positionOutput;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -86,7 +88,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     distanceError.setTolerance(dTolerance);
-    bearingError.setTolerance(bTolerance)
+    bearingError.setTolerance(bTolerance);
+    //for somewhat obvious reasons, any bearings above or below this range will be converted to this range
+    bearingError.enableContinuousInput(0, 360);
     m_timer.restart();
     //remember to call this line of code whenever a new destination has been reached
     TargetBearing= Math.tan((destination[0]-currentPose.getX())/(destination[1]-currentPose.getY()));
@@ -95,16 +99,16 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    bearing = gyro.getRotation2d().getDegrees();
-    bError = Math.abs(TargetBearing-bearing);
-    if(bError<bTolerance){
+    bError=Math.atan((destination[1]-currentPose.getY())/(destination[0]-currentPose.getX()));
+    bearingOutput=bearingError.calculate(bError);
+    if(bearingError.atSetpoint()){
       currentPose= odometry.update(gyro.getRotation2d(),MotorPositions);
       dError= Math.pow(destination[0]-currentPose.getX(),2);
       dError+= Math.pow(destination[1]-currentPose.getY(),2);
-      dError = Math.sqrt(dError);
-      if (dError>dTolerance){
+      positionOutput=distanceError.calculate(dError);
+      if (distanceError.atSetpoint()!=true){
         //write code for modifying the motor velocities
-      }
+      } 
     } else{
       //write code to get the robot to turn towards the correct bearing. 
     }
