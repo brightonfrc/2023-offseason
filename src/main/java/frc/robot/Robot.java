@@ -58,14 +58,13 @@ public class Robot extends TimedRobot {
   // creating the variables required for the autonomous code
   private double bearing;
   private double TargetBearing;
+  private double position;
   private double[] destination ={3.0,3.0};
   private double[] current={0,0};
   //setting distance tolerance to 1cm
   private double dTolerance = 0.01;
-  private double dError;
   //setting bearing tolerance to 0.5 degrees
   private double bTolerance=0.5;
-  private double bError;
   //remember to tune the PID controller
   private PIDController bearingError = new PIDController(0.0,0.0,0.0);
   private double bearingOutput;
@@ -88,24 +87,28 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     distanceError.setTolerance(dTolerance);
+    //remember to update setpoint whenever a new destination has been reached
+    distanceError.setSetpoint(Math.pow(Math.pow(destination[0],2)+Math.pow(destination[1],2),0.5));
     bearingError.setTolerance(bTolerance);
     //for somewhat obvious reasons, any bearings above or below this range will be converted to this range
     bearingError.enableContinuousInput(0, 360);
     m_timer.restart();
     //remember to call this line of code whenever a new destination has been reached
     TargetBearing= Math.tan((destination[0]-currentPose.getX())/(destination[1]-currentPose.getY()));
+    bearingError.setSetpoint(TargetBearing);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    bError=Math.atan((destination[1]-currentPose.getY())/(destination[0]-currentPose.getX()));
-    bearingOutput=bearingError.calculate(bError);
+    bearing= gyro.getRotation2d().getDegrees();
+    bearingOutput=bearingError.calculate(bearing);
     if(bearingError.atSetpoint()){
+      //do note that this code essentially operates on the idea that the robot and the target is currently on a straight line
+      //which is why I check if the robot has the right bearing first
       currentPose= odometry.update(gyro.getRotation2d(),MotorPositions);
-      dError= Math.pow(destination[0]-currentPose.getX(),2);
-      dError+= Math.pow(destination[1]-currentPose.getY(),2);
-      positionOutput=distanceError.calculate(dError);
+      position = Math.pow(Math.pow(currentPose.getX(),2)+Math.pow(currentPose.getY(),2),0.5);
+      positionOutput=distanceError.calculate(position);
       if (distanceError.atSetpoint()!=true){
         //write code for modifying the motor velocities
       } 
