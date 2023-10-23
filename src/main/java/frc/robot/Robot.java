@@ -101,12 +101,15 @@ public class Robot extends TimedRobot {
     }
   }
 
-  /** This function is called once each time the robot enters teleoperated mode. */
+  /*
+  //This function is called once each time the robot enters teleoperated mode. 
+
   @Override
   public void teleopInit() {
     //If we are in Teleoperated mode, turn on the second sensor (and turn off the first sensor)
     turnOnSensorTwo();
   }
+ */
 
   /** This function is called periodically during teleoperated mode. */
   @Override
@@ -117,11 +120,13 @@ public class Robot extends TimedRobot {
     ultrasonicSensorTwoRange = ultrasonicSensorTwo.getValue()*voltageScaleFactor*0.125;
   }
 
+  /*
   @Override
   public void disabledInit() {
     //If the robot is disabled, turn off both sensors
     turnOffBothSensors();
   }
+  */
 
   /** This function is called once each time the robot enters test mode. */
   @Override
