@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -15,7 +16,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import com.ctre.phoenix.sensors.WPI_PigeonIMU;
+import edu.wpi.first.wpilibj.I2C;
+import com.kauailabs.navx.frc.AHRS;
 
 
 
@@ -36,7 +38,7 @@ public class Robot extends TimedRobot {
   private final Timer m_timer = new Timer();
 
   // creating the variables required for the swerve drive odometry class
-  // locations for motors relative to center of the robot
+  // remember to modify locations for motors relative to center of the robot
   private Translation2d m_frontLeftLocation = new Translation2d();
   private Translation2d m_frontRightLocation = new Translation2d();
   private Translation2d m_backLeftLocation = new Translation2d();
@@ -47,29 +49,42 @@ public class Robot extends TimedRobot {
   private SwerveModulePosition m_backRight = new SwerveModulePosition();
   private SwerveModulePosition[] MotorPositions= {m_frontLeft,m_frontRight,m_backLeft,m_backRight};
   //initialising the gyro
-  private WPI_PigeonIMU gyro = new WPI_PigeonIMU(0); 
+  //remember to update where it is connected to
+  private AHRS gyro = new AHRS(I2C.Port.kMXP);
   //initialising the swerve drive kinematics
   private SwerveDriveKinematics robot_kinematics= new SwerveDriveKinematics(m_frontLeftLocation,m_frontRightLocation,m_backLeftLocation,m_backRightLocation);
   // initial coordinate and bearing of the robot
   private Pose2d currentPose = new Pose2d();
+  //presumably, the start bearing can be considered 0
+  private Rotation2d convertedAngle= new Rotation2d(0);
   // creating the SwerveDriveOdometry
-  private SwerveDriveOdometry odometry = new SwerveDriveOdometry(robot_kinematics, gyro.getRotation2d(),MotorPositions,currentPose);
+  private SwerveDriveOdometry odometry = new SwerveDriveOdometry(robot_kinematics, convertedAngle,MotorPositions,currentPose);
 
   // creating the variables required for the autonomous code
   private double bearing;
   private double TargetBearing;
   private double position;
   private double[] destination ={3.0,3.0};
-  private double[] current={0,0};
+  private double previous;
+  private double elapsed;
+  private SwerveModulePosition NewPosition= new SwerveModulePosition();
+  private Rotation2d NewModuleAngle=new Rotation2d();
   //setting distance tolerance to 1cm
   private double dTolerance = 0.01;
   //setting bearing tolerance to 0.5 degrees
   private double bTolerance=0.5;
   //remember to tune the PID controller
-  private PIDController bearingError = new PIDController(0.0,0.0,0.0);
+  private double bearingP;
+  private double bearingD;
+  private double bearingI;
+  private PIDController bearingError = new PIDController(bearingP,bearingI,bearingD);
   private double bearingOutput;
-  private PIDController distanceError = new PIDController(0.0,0.0,0.0);
+  private double distanceP;
+  private double distanceD;
+  private double distanceI;
+  private PIDController distanceError = new PIDController(distanceP,distanceI,distanceD);
   private double positionOutput;
+  
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -96,24 +111,41 @@ public class Robot extends TimedRobot {
     //remember to call this line of code whenever a new destination has been reached
     TargetBearing= Math.tan((destination[0]-currentPose.getX())/(destination[1]-currentPose.getY()));
     bearingError.setSetpoint(TargetBearing);
+    previous=m_timer.get();
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    bearing= gyro.getRotation2d().getDegrees();
-    bearingOutput=bearingError.calculate(bearing);
-    if(bearingError.atSetpoint()){
-      //do note that this code essentially operates on the idea that the robot and the target is currently on a straight line
-      //which is why I check if the robot has the right bearing first
-      currentPose= odometry.update(gyro.getRotation2d(),MotorPositions);
-      position = Math.pow(Math.pow(currentPose.getX(),2)+Math.pow(currentPose.getY(),2),0.5);
-      positionOutput=distanceError.calculate(position);
-      if (distanceError.atSetpoint()!=true){
-        //write code for modifying the motor velocities
-      } 
+    //updating the position of each swervedrive module
+    for(int index=0;index<4;index++){
+      //finding the time that has passed since the last call of autonomousPeriodic
+      elapsed=m_timer.get()-previous;
+      //get the velocity of each module and update their new positions accordingly. 
+      //0 is just the stopgap values
+      NewModuleAngle.fromDegrees(0.0);
+      NewPosition= new SwerveModulePosition(0.0,NewModuleAngle);
+      MotorPositions[index]=NewPosition;
+      previous=m_timer.get();
+    }
+    //updating the current position of the robot
+    convertedAngle=Rotation2d.fromDegrees(bearing);
+    currentPose= odometry.update(convertedAngle,MotorPositions);
+    position = Math.pow(Math.pow(currentPose.getX(),2)+Math.pow(currentPose.getY(),2),0.5);
+    //updating the position PID
+    positionOutput=distanceError.calculate(position);
+    if(distanceError.atSetpoint()==false){
+      //write code to modify the motor velocities
+      
     } else{
-      //write code to get the robot to turn towards the correct bearing. 
+      //updating the bearing PID
+      bearingOutput=bearingError.calculate(gyro.getAngle()%360);
+      if(bearingError.atSetpoint()){
+        //put the function for the robot to score the point by putting stuff down(depends on the rules)
+      }else{
+      //write code to get the robot to turn towards the correct bearing so that it can score the points 
+      
+    }
     }
   }
 
