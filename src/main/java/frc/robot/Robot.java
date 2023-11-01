@@ -38,17 +38,17 @@ public class Robot extends TimedRobot {
  
   public double voltageScaleFactor = 1;
  
-  public void turnOnSensorOne() {
+  public void turnOnUltrasonicSensorOne() {
     ultrasonicTriggerPinOne.set(true);
     ultrasonicTriggerPinTwo.set(false);
   }
  
- /* public void turnOnSensorTwo() {
+ /* public void turnOnUltrasonicSensorTwo() {
     ultrasonicTriggerPinOne.set(false);
     ultrasonicTriggerPinTwo.set(true);
   }
  
-  public void turnOffBothSensors() {
+  public void turnOffBothUltrasonicSensors() {
     ultrasonicTriggerPinOne.set(false);
     ultrasonicTriggerPinTwo.set(false);
   } */
@@ -65,15 +65,15 @@ public class Robot extends TimedRobot {
     m_rightDrive.setInverted(true);
 
     //Initialize range readings on SmartDashboard as max distance in Centimeters.
-    SmartDashboard.putNumber("Sensor 1 Range", 500);
-    SmartDashboard.putNumber("Sensor 2 Range", 500);
+    SmartDashboard.putNumber("Ultrasonic Sensor 1 Range", 500);
+    SmartDashboard.putNumber("Ultrasonic Sensor 2 Range", 500);
   }
 
   @Override
   public void robotPeriodic() {
     //Publish range readings to SmartDashboard
-    SmartDashboard.putNumber("Sensor 1 Range", ultrasonicSensorOneRange);
-    SmartDashboard.putNumber("Sensor 2 Range", ultrasonicSensorTwoRange);
+    SmartDashboard.putNumber("Ultrasonic Sensor 1 Range", ultrasonicSensorOneRange);
+    SmartDashboard.putNumber("Ultrasonic Sensor 2 Range", ultrasonicSensorTwoRange);
  
     voltageScaleFactor = 5/RobotController.getVoltage5V(); //Calculate what percentage of 5 Volts we are actually at
   }
@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_timer.restart();
     //If we are in Autonomous mode, turn on the first sensor (and turn off the second sensor)
-    turnOnSensorOne();
+    turnOnUltrasonicSensorOne();
   }
 
   /** This function is called periodically during autonomous. */
@@ -107,7 +107,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     //If we are in Teleoperated mode, turn on the second sensor (and turn off the first sensor)
-    turnOnSensorTwo();
+    turnOnUltrasonicSensorTwo();
   }
  */
 
@@ -124,7 +124,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     //If the robot is disabled, turn off both sensors
-    turnOffBothSensors();
+    turnOffBothUltrasonicSensors();
   }
   */
 
