@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.RobotController;
@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
  * the package after creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class ultrasonicSensor extends SubsystemBase {
+public class UltrasonicSensor extends SubsystemBase {
   public DigitalOutput ultrasonicTriggerPinOne = new DigitalOutput(0);
   public DigitalOutput ultrasonicTriggerPinTwo = new DigitalOutput(1);
  
