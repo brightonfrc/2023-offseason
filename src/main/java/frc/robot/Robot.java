@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.I2C;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -101,6 +102,7 @@ public class Robot extends TimedRobot {
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
+    SmartDashboard.putNumber("bearing",gyro.getAngle());
     distanceError.setTolerance(dTolerance);
     //remember to update setpoint whenever a new destination has been reached
     distanceError.setSetpoint(Math.pow(Math.pow(destination[0],2)+Math.pow(destination[1],2),0.5));
