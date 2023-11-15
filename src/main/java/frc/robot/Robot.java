@@ -119,6 +119,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    SmartDashboard.putNumber("bearing",gyro.getAngle());
     //updating the position of each swervedrive module
     for(int index=0;index<4;index++){
       //finding the time that has passed since the last call of autonomousPeriodic
